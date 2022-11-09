@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "514716219140",
+    "project_id": "strangify-b369f",
+    "storage_bucket": "strangify-b369f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514716219140:android:0c707b421ed05fdddac251",
+        "android_client_info": {
+          "package_name": "com.strangify.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "514716219140-eoi2perbc8sg4vp641r4vscl4mulvukq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.strangify.app",
+            "certificate_hash": "1768cb15fbe550237a01d99b20e9c29edacd4497"
+          }
+        },
+        {
+          "client_id": "514716219140-qj0gp81m5p00c89t44hjr8hjjsekhfb3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbZkGT_IDC9cY2KYePXNbIFLk5N4U0o8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "514716219140-qj0gp81m5p00c89t44hjr8hjjsekhfb3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "514716219140-3tui4kvtv6cf04itpmgdeqcglodpf7of.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.strangify.firebase-ios-setup"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
