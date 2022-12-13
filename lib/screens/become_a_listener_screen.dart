@@ -18,8 +18,9 @@ import '../constants.dart';
 import '../helpers/methods.dart';
 
 class BecomeAListenerScreen extends StatefulWidget {
+  final bool isListener;
   static const routeName = "/becomeAListenerScreen";
-  const BecomeAListenerScreen({super.key});
+  const BecomeAListenerScreen({super.key, required this.isListener});
 
   @override
   State<BecomeAListenerScreen> createState() => _BecomeAListenerScreenState();
@@ -53,6 +54,7 @@ class _BecomeAListenerScreenState extends State<BecomeAListenerScreen> {
   TextEditingController descController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
@@ -87,8 +89,8 @@ class _BecomeAListenerScreenState extends State<BecomeAListenerScreen> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      const StText(
-                        "Listener Settings",
+                      StText(
+                        "${widget.isListener ? "Listener" : "Counsellor"} Settings",
                         // color: Colors.white,
                         size: 20,
                         weight: FontWeight.w500,
@@ -274,8 +276,8 @@ class _BecomeAListenerScreenState extends State<BecomeAListenerScreen> {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton2(
                   isExpanded: true,
-                  customButton: const DropdownContainer(
-                    title: "Interests",
+                  customButton: DropdownContainer(
+                    title: widget.isListener ? "Interests" : "Specialization",
                   ),
                   items: tagList.map((item) {
                     return DropdownMenuItem<String>(
@@ -509,7 +511,7 @@ class _BecomeAListenerScreenState extends State<BecomeAListenerScreen> {
                   color: primaryColor, weight: FontWeight.w500),
             ),
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.only(
                   left: 6, right: 16, top: 10, bottom: 30),
               decoration: BoxDecoration(
@@ -523,10 +525,10 @@ class _BecomeAListenerScreenState extends State<BecomeAListenerScreen> {
                 cursorHeight: 16,
                 maxLines: 10,
                 style: const TextStyle(fontSize: 14, height: 1),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     isDense: true,
                     hintText: "Tell us your story...",
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       fontSize: 16,
                       height: 1,
                       fontWeight: FontWeight.w500,
@@ -540,11 +542,12 @@ class _BecomeAListenerScreenState extends State<BecomeAListenerScreen> {
                 // isLoading: isLoading,
                 style: ButtonStyle(
                     padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 10, horizontal: 16)),
+                        const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 16)),
                     backgroundColor: MaterialStateProperty.all(
                         isLoading ? Colors.grey : primaryColor)),
-                icon: Icon(CupertinoIcons.checkmark_alt),
-                label: StText("Complete Profile", color: Colors.white),
+                icon: const Icon(CupertinoIcons.checkmark_alt),
+                label: const StText("Complete Profile", color: Colors.white),
                 onPressed: () async {
                   if (image == null ||
                       !(isCallSelected || isChatSelected) ||

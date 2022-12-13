@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +12,7 @@ import 'package:strangify/providers/user_provider.dart';
 import 'package:strangify/screens/home_screen.dart';
 import '../constants.dart';
 import '../helpers/methods.dart';
+import '../screens/listener_home.dart';
 
 class UserService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -51,8 +51,10 @@ class UserService {
         bool userExists = userSnap.exists;
         if (userExists) {
           //    suser.User.fromSnap(userSnap.data() as Map<String, dynamic>);
-          provider.refreshUser().then((value) =>
-              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName));
+          provider.refreshUser().then((value) => Navigator.of(context)
+              .pushReplacementNamed(value?.role == 'speaker'
+                  ? HomeScreen.routeName
+                  : ListenerHomeScreen.routeName));
         } else {
           try {
             SharedPreferences prefs = await SharedPreferences.getInstance();

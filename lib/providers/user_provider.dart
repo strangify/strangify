@@ -6,8 +6,9 @@ class UserProvider with ChangeNotifier {
   User? user;
   User? get getUser => user;
 
-  Future refreshUser() async {
+  Future<User?> refreshUser() async {
     user = await UserService().getUserDetails();
     notifyListeners();
+    return user;
   }
 }

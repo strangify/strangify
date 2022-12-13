@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:strangify/constants.dart';
-import 'package:strangify/models/message_model.dart';
 import 'package:strangify/widgets/receive_bubble.dart';
 import 'package:strangify/widgets/send_bubble.dart';
 import 'package:strangify/widgets/st_text.dart';
@@ -37,81 +36,6 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  // List<MessageModel> messageList = [
-  //   MessageModel(
-  //       message: "Hi",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 100))),
-  //   MessageModel(
-  //       message: "Hello, My name is yash, How are you??",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 50))),
-  //   MessageModel(
-  //       message: "Also, Who are you?",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 150))),
-  //   MessageModel(
-  //       message: "message 4",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 190))),
-  //   MessageModel(
-  //       message: "Hello, My name is yash, How are you??",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 10))),
-  //   MessageModel(
-  //       message: "message 6",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 40))),
-  //   MessageModel(
-  //       message: "Hi",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 100))),
-  //   MessageModel(
-  //       message: "Hello, My name is yash, How are you??",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 50))),
-  //   MessageModel(
-  //       message: "Also, Who are you?",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 150))),
-  //   MessageModel(
-  //       message: "message 4",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 190))),
-  //   MessageModel(
-  //       message: "Hello, My name is yash, How are you??",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 12))),
-  //   MessageModel(
-  //       message: "message 6",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 40))),
-  //   MessageModel(
-  //       message: "Hi",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 100))),
-  //   MessageModel(
-  //       message: "Hello, My name is yash, How are you??",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 50))),
-  //   MessageModel(
-  //       message: "Also, Who are you?",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 150))),
-  //   MessageModel(
-  //       message: "message 4",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 190))),
-  //   MessageModel(
-  //       message: "Hello, My name is yash, How are you??",
-  //       senderId: "1",
-  //       time: DateTime.now().subtract(Duration(seconds: 15))),
-  //   MessageModel(
-  //       message: "message 6",
-  //       senderId: "2",
-  //       time: DateTime.now().subtract(Duration(seconds: 40))),
-  // ];
-
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mq = MediaQuery.of(context);
@@ -123,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               StText(widget.args["name"], color: Colors.white),
-              StText("01.10", size: 16, color: Colors.white),
+              const StText("01.10", size: 16, color: Colors.white),
             ],
           ),
           leading: Padding(
@@ -138,9 +62,10 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Container(
               width: double.infinity,
-              padding:
-                  EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-              margin: EdgeInsets.only(top: 22, left: 20, right: 20, bottom: 10),
+              padding: const EdgeInsets.only(
+                  top: 10, left: 20, right: 20, bottom: 10),
+              margin: const EdgeInsets.only(
+                  top: 22, left: 20, right: 20, bottom: 10),
               height: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -149,19 +74,19 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  StText(
+                  const StText(
                     "Running low on funds?",
                     weight: FontWeight.w500,
                   ),
                   ElevatedButton(
                       style: ButtonStyle(
                           padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(
+                              const EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 16)),
                           backgroundColor:
                               MaterialStateProperty.all(primaryColor)),
                       onPressed: () {},
-                      child: StText(
+                      child: const StText(
                         "Recharge",
                         size: 14,
                         color: Colors.white,
@@ -179,7 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   stream: widget.args["chatRef"].snapshots(),
                   builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                     if (!snapshot.hasData) {
-                      return SizedBox();
+                      return const SizedBox();
                     }
                     List messageList =
                         (snapshot.data!.data() as Map)["messageList"];

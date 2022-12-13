@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:strangify/constants.dart';
 import 'package:strangify/screens/login_screen.dart';
@@ -45,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       height: 100,
                       width: 100,
                     )),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 SizedBox(
                   height: mq.size.height - 290,
                   child: PageView.builder(
@@ -111,8 +110,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             },
             child: Container(
                 height: 56,
-                padding: EdgeInsets.only(top: 2, left: 20),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.only(top: 2, left: 20),
+                decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20)),
@@ -120,7 +119,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: mq.size.width,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: const [
                     StText("Get Started  ", size: 20, color: Colors.white),
                     Icon(Icons.arrow_forward_ios_rounded,
                         size: 20, color: Colors.white)

@@ -167,3 +167,11 @@ class MyApp extends StatelessWidget {
         ));
   }
 }
+
+// Session status
+// 1. waiting
+// 2. active
+// 3. done
+// 4. cancelled
+// 5. rejected
+// 6. expired

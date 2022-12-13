@@ -34,6 +34,7 @@ dependencies:
   hmssdk_flutter: ^0.7.8
   wakelock: ^0.6.2
   permission_handler: ^10.2.0
+  flutter_stripe: ^7.0.0
 
 dependency_overrides:
   cloud_firestore:

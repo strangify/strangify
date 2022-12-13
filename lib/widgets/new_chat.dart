@@ -39,75 +39,75 @@ class _NewChatState extends State<NewChat> {
     MessageModel(
         message: "Hi",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 100))),
+        time: DateTime.now().subtract(const Duration(seconds: 100))),
     MessageModel(
         message: "Hello, My name is yash, How are you??",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 50))),
+        time: DateTime.now().subtract(const Duration(seconds: 50))),
     MessageModel(
         message: "Also, Who are you?",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 150))),
+        time: DateTime.now().subtract(const Duration(seconds: 150))),
     MessageModel(
         message: "message 4",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 190))),
+        time: DateTime.now().subtract(const Duration(seconds: 190))),
     MessageModel(
         message: "Hello, My name is yash, How are you??",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 10))),
+        time: DateTime.now().subtract(const Duration(seconds: 10))),
     MessageModel(
         message: "message 6",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 40))),
+        time: DateTime.now().subtract(const Duration(seconds: 40))),
     MessageModel(
         message: "Hi",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 100))),
+        time: DateTime.now().subtract(const Duration(seconds: 100))),
     MessageModel(
         message: "Hello, My name is yash, How are you??",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 50))),
+        time: DateTime.now().subtract(const Duration(seconds: 50))),
     MessageModel(
         message: "Also, Who are you?",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 150))),
+        time: DateTime.now().subtract(const Duration(seconds: 150))),
     MessageModel(
         message: "message 4",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 190))),
+        time: DateTime.now().subtract(const Duration(seconds: 190))),
     MessageModel(
         message: "Hello, My name is yash, How are you??",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 12))),
+        time: DateTime.now().subtract(const Duration(seconds: 12))),
     MessageModel(
         message: "message 6",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 40))),
+        time: DateTime.now().subtract(const Duration(seconds: 40))),
     MessageModel(
         message: "Hi",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 100))),
+        time: DateTime.now().subtract(const Duration(seconds: 100))),
     MessageModel(
         message: "Hello, My name is yash, How are you??",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 50))),
+        time: DateTime.now().subtract(const Duration(seconds: 50))),
     MessageModel(
         message: "Also, Who are you?",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 150))),
+        time: DateTime.now().subtract(const Duration(seconds: 150))),
     MessageModel(
         message: "message 4",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 190))),
+        time: DateTime.now().subtract(const Duration(seconds: 190))),
     MessageModel(
         message: "Hello, My name is yash, How are you??",
         senderId: "1",
-        time: DateTime.now().subtract(Duration(seconds: 15))),
+        time: DateTime.now().subtract(const Duration(seconds: 15))),
     MessageModel(
         message: "message 6",
         senderId: "2",
-        time: DateTime.now().subtract(Duration(seconds: 40))),
+        time: DateTime.now().subtract(const Duration(seconds: 40))),
   ];
 
   @override
@@ -193,9 +193,9 @@ class _NewChatState extends State<NewChat> {
                       FocusScope.of(context).unfocus();
                     }
                   },
-                  child: CircleAvatar(
+                  child: const CircleAvatar(
                       child: Padding(
-                          padding: const EdgeInsets.only(right: 3, top: 1),
+                          padding: EdgeInsets.only(right: 3, top: 1),
                           child: SizedBox(
                               width: 30,
                               height: 30,
@@ -204,7 +204,7 @@ class _NewChatState extends State<NewChat> {
                                 color: Colors.white,
                               ))),
                       radius: 21,
-                      backgroundColor: const Color(0xFF063763)),
+                      backgroundColor: Color(0xFF063763)),
                 )
               ]),
             )

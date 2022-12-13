@@ -3,11 +3,13 @@ import 'package:strangify/models/user_model.dart';
 import 'package:strangify/screens/become_a_listener_screen.dart';
 import 'package:strangify/screens/onboarding_screen.dart';
 import 'package:strangify/screens/under_review_screen.dart';
+import 'package:strangify/screens/wallet_screen.dart';
 
 import '../screens/call_screen.dart';
 import '../screens/chat_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/listener_detail_screen.dart';
+import '../screens/listener_home.dart';
 import '../screens/login_screen.dart';
 
 class RouteGenerator {
@@ -19,9 +21,17 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (context) => const HomeScreen(),
         );
+      case ListenerHomeScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) => const ListenerHomeScreen(),
+        );
       case CallScreen.routeName:
         return MaterialPageRoute(
-          builder: (context) => const CallScreen(),
+          builder: (context) => CallScreen(args: args as Map),
+        );
+      case WalletScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) => const WalletScreen(),
         );
       case ChatScreen.routeName:
         return MaterialPageRoute(
@@ -49,7 +59,7 @@ class RouteGenerator {
         );
       case BecomeAListenerScreen.routeName:
         return MaterialPageRoute(
-          builder: (context) => const BecomeAListenerScreen(),
+          builder: (context) => BecomeAListenerScreen(isListener: args as bool),
         );
       default:
         return errorRoute();

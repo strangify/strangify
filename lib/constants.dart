@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+const sessionExpiryDuration = 12000;
+const fakeListenerPrice = 10;
+const listenerPrice = 7;
+const fakeCounsellorPrice = 20;
+const counsellorPrice = 10;
+
 const Color primaryColor = Color(0xFF5474fb);
 const Color primaryLight = Color.fromARGB(255, 179, 192, 249);
 const Color greyColor = Color.fromRGBO(97, 97, 97, 1);

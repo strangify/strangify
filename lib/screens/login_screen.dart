@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:strangify/helpers/methods.dart';
 import 'package:strangify/services/user_services.dart';
 import 'package:strangify/widgets/st_text.dart';
-import 'package:strangify/widgets/st_tf.dart';
 
 import '../constants.dart';
 import '../providers/user_provider.dart';
@@ -79,13 +78,13 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(30))),
                 child: Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(30),
@@ -142,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       // ),
                       IntlPhoneField(
                         showDropdownIcon: false,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             hintText: "  Phone Number",
                             hintStyle: TextStyle(
                               letterSpacing: 1.2,
@@ -159,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: verificationID == null ? 0 : 10),
                       verificationID == null
-                          ? SizedBox()
+                          ? const SizedBox()
                           : TextField(
                               onChanged: (value) {
                                 if (value.length == 6) {
@@ -168,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               controller: otpController,
                               maxLength: 6,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   prefixIcon: Icon(
                                     CupertinoIcons.lock,
                                     size: 24,
@@ -185,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           // isLoading: isLoading,
                           style: ButtonStyle(
                               padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
+                                  const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 16)),
                               backgroundColor:
                                   MaterialStateProperty.all(primaryColor)),
@@ -204,10 +203,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (verificationID == null) {
                                   await verifyPhone();
                                 } else {
-                                  print(verificationID);
-                                  print(otpController.text);
-                                  print(initialCountryCode);
-                                  print(phoneController.text);
+                                  // print(verificationID);
+                                  // print(otpController.text);
+                                  // print(initialCountryCode);
+                                  // print(phoneController.text);
                                   await UserService().signInWithPhoneNumber(
                                       initialCountryCode +
                                           phoneController.text.trim(),

@@ -34,12 +34,12 @@ class _NewHomeState extends State<NewHome> {
                   "status": "waiting"
                 }).then((value) => null);
               },
-              leading: CircleAvatar(child: Icon(Icons.person)),
+              leading: const CircleAvatar(child: Icon(Icons.person)),
               title: Text(data['name']),
               subtitle: Text(documentSnapshots[index].id),
             );
           }
-          return SizedBox();
+          return const SizedBox();
         },
         // orderBy is compulsory to enable pagination
         query: FirebaseFirestore.instance.collection('users').orderBy('name'),

@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strangify/constants.dart';
+import 'package:strangify/providers/user_provider.dart';
+import 'package:strangify/screens/listener_home.dart';
 import 'package:strangify/screens/onboarding_screen.dart';
 
 import 'home_screen.dart';
-import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -24,6 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   init() async {
     User? user = FirebaseAuth.instance.currentUser;
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = await FirebaseMessaging.instance.getToken();
     if (token != null) {
@@ -34,8 +38,10 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.of(context)
               .pushReplacementNamed(OnboardingScreen.routeName));
     } else {
-      Future.delayed(const Duration(seconds: 3)).whenComplete(() =>
-          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName));
+      await userProvider.refreshUser().then((value) => Navigator.of(context)
+          .pushReplacementNamed(value?.role == 'speaker'
+              ? HomeScreen.routeName
+              : ListenerHomeScreen.routeName));
     }
   }
 

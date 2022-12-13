@@ -69,7 +69,7 @@ class HomeDrawer extends StatelessWidget {
               //     ));
             },
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           ListTile(
             tileColor: primaryColor,
             leading: const Icon(
@@ -83,10 +83,11 @@ class HomeDrawer extends StatelessWidget {
               weight: FontWeight.w500,
             ),
             onTap: () {
-              Navigator.pushNamed(context, BecomeAListenerScreen.routeName);
+              Navigator.pushNamed(context, BecomeAListenerScreen.routeName,
+                  arguments: true);
             },
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           ListTile(
             tileColor: primaryColor,
             leading: const Icon(
@@ -100,7 +101,8 @@ class HomeDrawer extends StatelessWidget {
               weight: FontWeight.w500,
             ),
             onTap: () {
-              Navigator.pushNamed(context, BecomeAListenerScreen.routeName);
+              Navigator.pushNamed(context, BecomeAListenerScreen.routeName,
+                  arguments: false);
             },
           ),
           ListTile(
@@ -194,7 +196,7 @@ class HomeDrawer extends StatelessWidget {
           //   width: double.infinity,
           // ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
             color: Colors.grey,
             height: 1,
