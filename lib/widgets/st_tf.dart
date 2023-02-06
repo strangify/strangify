@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:strangify/helpers/methods.dart';
 import 'package:strangify/widgets/st_text.dart';
 
@@ -7,7 +8,7 @@ import '../constants.dart';
 class StTF extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-
+  final List<TextInputFormatter>? formatters;
   final FocusNode? node;
   final FocusNode? nextNode;
   final TextInputType? type;
@@ -29,7 +30,8 @@ class StTF extends StatefulWidget {
       this.isEnabled,
       this.headerText,
       this.suffixIcon,
-      this.onSubmit})
+      this.onSubmit,
+      this.formatters})
       : super(key: key);
 
   @override
@@ -39,61 +41,50 @@ class StTF extends StatefulWidget {
 class _StTFState extends State<StTF> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        widget.headerText != null
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 12, left: 2),
-                child: StText(widget.headerText!))
-            : const SizedBox(),
-        TextFormField(
-          onEditingComplete: widget.onSubmit,
-          controller: widget.controller,
-          focusNode: widget.node,
-          autovalidateMode: widget.suffixIcon == null
-              ? AutovalidateMode.onUserInteraction
-              : AutovalidateMode.disabled,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '*${widget.hintText.capitalize()} is Required';
-            }
+    return SizedBox(
+      height: 52,
+      child: TextFormField(
+        onEditingComplete: widget.onSubmit,
+        controller: widget.controller,
+        focusNode: widget.node,
+        autovalidateMode: widget.suffixIcon == null
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '*${widget.hintText.capitalize()} is Required';
+          }
 
-            return null;
-          },
-          onFieldSubmitted: (_) {
-            if (widget.nextNode != null) {
-              FocusScope.of(context).requestFocus(widget.nextNode);
-            } else {
-              FocusScope.of(context).unfocus();
-            }
-          },
-          cursorColor: const Color(0xFF080808),
-          cursorWidth: 1.5,
-          cursorHeight: 16,
-          enabled: widget.isEnabled ?? true,
-          textInputAction: widget.action,
-          keyboardType: widget.type,
-          style: const TextStyle(fontSize: 14, height: 1),
-          decoration: InputDecoration(
-              // fillColor: widget.isEnabled != null
-              //     ? iconColor.withOpacity(.25)
-              //     : backgroundColor,
-
-              suffixIcon: widget.suffixIcon,
-              hintText: widget.hintText,
-              hintStyle: const TextStyle(
-                  fontSize: 14,
-                  height: 1,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.grey),
-              errorBorder: errorBorder,
-              focusedBorder: border,
-              enabledBorder: border,
-              focusedErrorBorder: errorBorder,
-              border: border),
-        ),
-      ],
+          return null;
+        },
+        onFieldSubmitted: (_) {
+          if (widget.nextNode != null) {
+            FocusScope.of(context).requestFocus(widget.nextNode);
+          } else {
+            FocusScope.of(context).unfocus();
+          }
+        },
+        cursorColor: const Color(0xFF080808),
+        cursorWidth: 1.5,
+        cursorHeight: 16,
+        inputFormatters: widget.formatters,
+        enabled: widget.isEnabled ?? true,
+        textInputAction: widget.action,
+        keyboardType: widget.type,
+        style: const TextStyle(fontSize: 14, height: 1),
+        decoration: InputDecoration(
+            filled: true,
+            helperText: " ",
+            fillColor: Colors.white,
+            suffixIcon: widget.suffixIcon,
+            errorBorder: errorBorder,
+            focusedBorder: border,
+            errorStyle:
+                TextStyle(height: 0, fontSize: 10, color: Colors.red[100]),
+            enabledBorder: border,
+            focusedErrorBorder: errorBorder,
+            border: border),
+      ),
     );
   }
 }

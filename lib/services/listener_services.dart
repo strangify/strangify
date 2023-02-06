@@ -12,9 +12,21 @@ class ListenerService {
         .collection("users")
         .where("role", isEqualTo: "listener")
         .get();
-    docs.docs.forEach((element) {
+    for (var element in docs.docs) {
       listeners.add(u.User.fromSnap(element.data() as Map<String, dynamic>));
-    });
+    }
     return listeners;
+  }
+
+  Future<List<u.User>> fetchCounsellors() async {
+    List<u.User> counsellors = [];
+    QuerySnapshot docs = await _db
+        .collection("users")
+        .where("role", isEqualTo: "counsellor")
+        .get();
+    for (var element in docs.docs) {
+      counsellors.add(u.User.fromSnap(element.data() as Map<String, dynamic>));
+    }
+    return counsellors;
   }
 }

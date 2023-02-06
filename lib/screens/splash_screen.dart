@@ -8,6 +8,7 @@ import 'package:strangify/providers/user_provider.dart';
 import 'package:strangify/screens/listener_home.dart';
 import 'package:strangify/screens/onboarding_screen.dart';
 
+import '../providers/settings_provider.dart';
 import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -28,6 +29,8 @@ class _SplashScreenState extends State<SplashScreen> {
     User? user = FirebaseAuth.instance.currentUser;
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
+    SettingsProvider settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = await FirebaseMessaging.instance.getToken();
     if (token != null) {
@@ -38,6 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.of(context)
               .pushReplacementNamed(OnboardingScreen.routeName));
     } else {
+      await settingsProvider.refreshUser();
       await userProvider.refreshUser().then((value) => Navigator.of(context)
           .pushReplacementNamed(value?.role == 'speaker'
               ? HomeScreen.routeName
@@ -47,11 +51,33 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: primaryColor,
-        body: Center(
-          child: Hero(
-              tag: "logo", child: Image.asset('assets/transparent_logo.png')),
+        backgroundColor: Colors.white,
+        body: Stack(
+          alignment: Alignment.center,
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              top: 0,
+              left: 10,
+              child: Transform.scale(
+                  scale: 1.1,
+                  child: Image.asset(
+                    'assets/splash-bg.png',
+                    width: size.width + 20,
+                  )),
+            ),
+            Positioned(
+              bottom: 40,
+              child: Transform.scale(
+                  scale: 1.1,
+                  child: Image.asset(
+                    'assets/Logo-01-01.png',
+                    width: 60,
+                  )),
+            ),
+          ],
         ));
   }
 }

@@ -39,7 +39,7 @@ class RouteGenerator {
         );
       case UnderReviewScreen.routeName:
         return MaterialPageRoute(
-          builder: (context) => UnderReviewScreen(isFirstTime: args as bool),
+          builder: (context) => const UnderReviewScreen(),
         );
       // case RatingsScreen.routeName:
       //   return MaterialPageRoute(

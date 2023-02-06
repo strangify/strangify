@@ -23,6 +23,10 @@
         android:label="strangify"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+  android:name="com.google.android.gms.wallet.api.enabled"
+  android:value="true" />
          <meta-data
           android:name="com.google.firebase.messaging.default_notification_icon"
           android:resource="@drawable/ic_notification" />
@@ -54,4 +58,20 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <queries>
+
+    <package android:name="com.google.android.apps.nbu.paisa.user" />
+    <package android:name="com.phonepe.app"/>
+    <package android:name="net.one97.paytm"/>
+    <package android:name="in.amazon.mShop.android.shopping"/>
+
+    <intent>
+        <action android:name="android.intent.action.SEND" />
+    </intent>
+
+     <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="https" />
+  </intent>
+</queries>
 </manifest>

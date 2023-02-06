@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:strangify/constants.dart';
 import 'package:strangify/screens/listener_detail_screen.dart';
+import 'package:strangify/screens/wallet_screen.dart';
 import 'package:strangify/services/listener_services.dart';
+import 'package:strangify/widgets/home_basic_tile.dart';
 import 'package:strangify/widgets/home_drawer.dart';
+import 'package:strangify/widgets/st_header.dart';
 
 import '../models/user_model.dart';
 import '../providers/user_provider.dart';
@@ -19,10 +22,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<User> listeners = [];
+  List<User> counsellors = [];
+  bool listenerSelected = true;
   @override
   void initState() {
     ListenerService().fetchListeners().then((value) => setState(() {
           listeners = value;
+        }));
+
+    ListenerService().fetchCounsellors().then((value) => setState(() {
+          counsellors = value;
         }));
 
     super.initState();
@@ -32,244 +41,121 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
     final MediaQueryData mq = MediaQuery.of(context);
-    double appbarHeight = AppBar().preferredSize.height;
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-            drawer: const HomeDrawer(),
-            appBar: AppBar(
-              actions: [
-                Container(
-                  // decoration: BoxDecoration(
-                  //   borderRadius: BorderRadius.circular(8),
-                  //   border: Border.all(color: Colors.white),
-                  // ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  margin: const EdgeInsets.only(top: 11, bottom: 11, right: 10),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.history, size: 20),
-                      SizedBox(width: 6),
-                      StText(
-                        "History",
-                        color: Colors.white,
-                        size: 15,
-                        weight: FontWeight.w500,
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.white),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  margin: const EdgeInsets.only(top: 11, bottom: 11, right: 10),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.wallet, size: 20),
-                      const SizedBox(width: 10),
-                      const StText(
-                        "0.00",
-                        color: Colors.white,
-                        size: 15,
-                        weight: FontWeight.w500,
-                      )
-                    ],
-                  ),
-                )
-              ],
-              backgroundColor: primaryColor,
-              bottom: const TabBar(
-                //  labelColor: primaryColor,
-                indicatorColor: primaryColor,
-                indicatorWeight: 3,
-                tabs: [
-                  Tab(
-                    child: StText(
-                      "Listeners",
-                      color: Colors.white,
-                    ),
-                  ),
-                  Tab(
-                    child: StText(
-                      "Counsellors",
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+
+    return Scaffold(
+        drawer: const HomeDrawer(),
+        appBar: PreferredSize(
+          preferredSize: Size(double.infinity, 90),
+          child: StHeader(
+              child1: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: StText(listenerSelected ? "Listeners" : "Counsellors",
+                  color: Colors.white, weight: FontWeight.w600),
             ),
-            body: RefreshIndicator(
-              color: primaryColor,
-              onRefresh: () async {
+          )),
+        ),
+        body: RefreshIndicator(
+            color: primaryColor,
+            onRefresh: () async {
+              if (listenerSelected) {
                 listeners.clear();
                 ListenerService().fetchListeners().then((value) => setState(() {
                       listeners = value;
                     }));
-              },
-              child: ListView.builder(
-                itemCount: listeners.length,
-                padding: const EdgeInsets.only(top: 15),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                          ListenerDetailScreen.routeName,
-                          arguments: listeners[index]);
-                    },
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 4),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Container(
-                        height: 95,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 6),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          children: [
-                            Row(
-                              children: [
-                                Card(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 4),
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Hero(
-                                    tag: "pfp",
-                                    child: Container(
-                                      width: 75,
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: NetworkImage(
-                                                  listeners[index].imageUrl!)),
-                                          color: Colors.grey[300],
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 5.8),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          SizedBox(
-                                            width: mq.size.width - 175,
-                                            child: StText(
-                                              listeners[index].name!,
-                                              weight: FontWeight.w500,
-                                              size: 16,
-                                            ),
-                                          ),
-                                          Container(
-                                            // margin: const EdgeInsets.symmetric(
-                                            //     vertical: 10),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 6, vertical: 3),
-                                            decoration: BoxDecoration(
-                                                color:
-                                                    listeners[index].isOnline!
-                                                        ? Colors.green
-                                                        : Colors.red,
-                                                borderRadius:
-                                                    BorderRadius.circular(4)),
-                                            child: StText(
-                                              listeners[index].isOnline!
-                                                  ? "Online"
-                                                  : "Offline",
-                                              size: 10,
-                                              spacing: 1.1,
-                                              weight: FontWeight.w500,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: mq.size.width - 150,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 3),
-                                          child: StText(
-                                            listeners[index].description!,
-                                            maxLines: 2,
-                                            height: 1,
-                                            size: 12,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width: mq.size.width - 200,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    size: 16,
-                                                    color: Colors.amber[600],
-                                                  ),
-                                                  const StText(
-                                                    " -",
-                                                    weight: FontWeight.w500,
-                                                    size: 12,
-                                                  ),
-                                                ],
-                                              ),
-                                              Container(
-                                                transform:
-                                                    Matrix4.translationValues(
-                                                        0, 2, 0),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                  border: Border.all(
-                                                      color: primaryColor),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 2,
-                                                        horizontal: 6),
-                                                child: StText(
-                                                  "${listeners[index].gender.toString()[0].toUpperCase()} - ${listeners[index].age}Y",
-                                                  weight: FontWeight.bold,
-                                                  size: 11,
-                                                  color: primaryColor,
-                                                ),
-                                              ),
-                                            ],
-                                          ))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
+              } else {
+                counsellors.clear();
+                ListenerService()
+                    .fetchCounsellors()
+                    .then((value) => setState(() {
+                          counsellors = value;
+                        }));
+              }
+            },
+            child: Stack(
+              children: [
+                listenerSelected
+                    ? ListView.builder(
+                        itemCount: listeners.length,
+                        padding: const EdgeInsets.only(top: 15),
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                  ListenerDetailScreen.routeName,
+                                  arguments: listeners[index]);
+                            },
+                            child: HomeBasicTile(user: listeners[index]),
+                          );
+                        },
+                      )
+                    : ListView.builder(
+                        itemCount: counsellors.length,
+                        padding: const EdgeInsets.only(top: 15),
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                  ListenerDetailScreen.routeName,
+                                  arguments: counsellors[index]);
+                            },
+                            child: HomeBasicTile(user: counsellors[index]),
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
-              ),
+                Positioned(
+                  bottom: 30,
+                  width: mq.size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              listenerSelected = true;
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            width: 140,
+                            height: 40,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: !listenerSelected ? null : gradient1,
+                                border: Border.all(color: gradient1),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: StText("Listeners",
+                                size: 16,
+                                color: !listenerSelected
+                                    ? greyColor
+                                    : Colors.white),
+                          )),
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              listenerSelected = false;
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            width: 140,
+                            height: 40,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: listenerSelected ? null : gradient1,
+                                border: Border.all(color: gradient1),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: StText("Counsellors",
+                                size: 16,
+                                color: listenerSelected
+                                    ? greyColor
+                                    : Colors.white),
+                          ))
+                    ],
+                  ),
+                )
+              ],
             )));
   }
 }

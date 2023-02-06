@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:strangify/screens/login_screen.dart';
 import 'package:strangify/widgets/st_text.dart';
+import 'package:strangify/widgets/support_dialog.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../constants.dart';
+import '../providers/settings_provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/become_a_listener_screen.dart';
+import '../screens/wallet_screen.dart';
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({Key? key}) : super(key: key);
@@ -15,128 +19,122 @@ class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
+    SettingsProvider settingsProvider = Provider.of<SettingsProvider>(context);
     return Drawer(
+      width: 260,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          DrawerHeader(
-            margin: EdgeInsets.zero,
-            padding: const EdgeInsets.all(10),
-            child: Column(
+          Stack(
+            children: [
+              Positioned(
+                  left: -30,
+                  top: -30,
+                  child: Image.asset("assets/signup-1.png", height: 120)),
+              DrawerHeader(
+                margin: EdgeInsets.zero,
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.close,
+                            ))
+                      ],
+                    ),
+                    Padding(
+                        padding: EdgeInsets.only(top: 40),
+                        child: ListTile(
+                          title: StText(
+                              'Welcome,\n${userProvider.getUser!.name ?? "Anonymous User"}',
+                              size: 18,
+                              weight: FontWeight.w400,
+                              height: 1.5),
+                        )),
+                  ],
+                ),
+              ),
+              Positioned(
+                  right: 15,
+                  top: 100,
+                  child: Image.asset("assets/signup-2.png", height: 80)),
+            ],
+          ),
+          ListTile(
+            tileColor: primaryColor,
+            dense: true,
+            minLeadingWidth: 30,
+            leading: const Icon(Icons.wallet, color: Colors.white, size: 20),
+            title: const StText("Wallet",
+                color: Colors.white, size: 16, weight: FontWeight.w500),
+            onTap: () =>
+                Navigator.of(context).pushNamed(WalletScreen.routeName),
+          ),
+          if (userProvider.getUser!.role == "speaker")
+            Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(
-                            Icons.close,
-                          ))
-                    ],
-                  ),
+                const SizedBox(height: 10),
+                ListTile(
+                  tileColor: primaryColor,
+                  dense: true,
+                  minLeadingWidth: 30,
+                  leading:
+                      const Icon(Icons.group, color: Colors.white, size: 20),
+                  title: const StText("Become A Listener",
+                      color: Colors.white, size: 16, weight: FontWeight.w500),
+                  onTap: () {
+                    Navigator.pushNamed(
+                        context, BecomeAListenerScreen.routeName,
+                        arguments: true);
+                  },
+                ),
+                const SizedBox(height: 10),
+                ListTile(
+                  tileColor: primaryColor,
+                  dense: true,
+                  minLeadingWidth: 30,
+                  leading:
+                      const Icon(Icons.group, color: Colors.white, size: 20),
+                  title: const StText("Become A Counsellor",
+                      color: Colors.white, size: 16, weight: FontWeight.w500),
+                  onTap: () {
+                    Navigator.pushNamed(
+                        context, BecomeAListenerScreen.routeName,
+                        arguments: false);
+                  },
                 ),
                 ListTile(
-                  title: StText(
-                      'Welcome,\nAnonymous User\n${userProvider.getUser?.phone}',
-                      size: 19,
-                      weight: FontWeight.w500,
-                      height: 1.5),
+                  dense: true,
+                  minLeadingWidth: 30,
+                  leading: const Icon(Icons.history, size: 20),
+                  title: const StText("Recently Connected",
+                      color: greyColor, size: 16, weight: FontWeight.w500),
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => MessageScreen(),
+                    //   ),
+                    // );
+                  },
                 ),
               ],
             ),
-          ),
+
           ListTile(
-            tileColor: primaryColor,
-            leading: const Icon(
-              Icons.wallet,
-              color: Colors.white,
-            ),
-            title: const StText(
-              "Wallet",
-              color: Colors.white,
-              size: 18,
-              weight: FontWeight.w500,
-            ),
+            dense: true,
+            minLeadingWidth: 30,
+            leading: const Icon(Icons.support_agent, size: 20),
+            title: const StText("Support",
+                color: greyColor, size: 16, weight: FontWeight.w500),
             onTap: () {
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => BookingScreen(),
-              //     ));
-            },
-          ),
-          const SizedBox(height: 10),
-          ListTile(
-            tileColor: primaryColor,
-            leading: const Icon(
-              Icons.group,
-              color: Colors.white,
-            ),
-            title: const StText(
-              "Become A Listener",
-              color: Colors.white,
-              size: 18,
-              weight: FontWeight.w500,
-            ),
-            onTap: () {
-              Navigator.pushNamed(context, BecomeAListenerScreen.routeName,
-                  arguments: true);
-            },
-          ),
-          const SizedBox(height: 10),
-          ListTile(
-            tileColor: primaryColor,
-            leading: const Icon(
-              Icons.group,
-              color: Colors.white,
-            ),
-            title: const StText(
-              "Become A Counsellor",
-              color: Colors.white,
-              size: 18,
-              weight: FontWeight.w500,
-            ),
-            onTap: () {
-              Navigator.pushNamed(context, BecomeAListenerScreen.routeName,
-                  arguments: false);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const StText(
-              "Recently Connected",
-              color: greyColor,
-              size: 18,
-              weight: FontWeight.w500,
-            ),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => MessageScreen(),
-              //   ),
-              // );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.support_agent),
-            title: const StText(
-              "Support",
-              color: greyColor,
-              size: 18,
-              weight: FontWeight.w500,
-            ),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => GalleryScreen(),
-              //   ),
-              // );
+              supportEmailDialog(context);
             },
           ),
           // ListTile(
@@ -157,37 +155,32 @@ class HomeDrawer extends StatelessWidget {
           //   },
           // ),
           ListTile(
-            leading: const Icon(CupertinoIcons.lock),
-            title: const StText(
-              "Privacy Policy",
-              color: greyColor,
-              size: 18,
-              weight: FontWeight.w500,
-            ),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => MessageScreen(),
-              //   ),
-              // );
+            dense: true,
+            minLeadingWidth: 30,
+            leading: const Icon(CupertinoIcons.lock, size: 20),
+            title: const StText("Privacy Policy",
+                color: greyColor, size: 16, weight: FontWeight.w500),
+            onTap: () async {
+              if (userProvider.getUser!.role == "speaker") {
+                await launchUrlString(settingsProvider.settings!.usersPrivacy);
+              } else {
+                await launchUrlString(
+                    settingsProvider.settings!.listenerPrivacy);
+              }
             },
           ),
           ListTile(
-            leading: const Icon(CupertinoIcons.doc_on_doc),
-            title: const StText(
-              "Terms & Conditions",
-              color: greyColor,
-              size: 18,
-              weight: FontWeight.w500,
-            ),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => MessageScreen(),
-              //   ),
-              // );
+            dense: true,
+            minLeadingWidth: 30,
+            leading: const Icon(CupertinoIcons.doc_on_doc, size: 20),
+            title: const StText("Terms & Conditions",
+                color: greyColor, size: 16, weight: FontWeight.w500),
+            onTap: () async {
+              if (userProvider.getUser!.role == "speaker") {
+                await launchUrlString(settingsProvider.settings!.usersTerms);
+              } else {
+                await launchUrlString(settingsProvider.settings!.listenerTerms);
+              }
             },
           ),
           // Container(
@@ -203,13 +196,11 @@ class HomeDrawer extends StatelessWidget {
             width: double.infinity,
           ),
           ListTile(
-              leading: const Icon(Icons.logout),
-              title: const StText(
-                "Logout",
-                color: greyColor,
-                size: 20,
-                weight: FontWeight.w500,
-              ),
+              dense: true,
+              minLeadingWidth: 30,
+              leading: const Icon(Icons.logout, size: 20),
+              title: const StText("Logout",
+                  color: greyColor, size: 16, weight: FontWeight.w500),
               onTap: () {
                 FirebaseAuth.instance.signOut().then((value) =>
                     Navigator.of(context)

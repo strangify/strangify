@@ -1,0 +1,22 @@
+{
+    "provider": "apple_pay",
+    "data": {
+      "merchantIdentifier": "merchant.com.strangify.app",
+      "displayName": "Strangify Technologies",
+      "merchantCapabilities": [
+        "3DS",
+        "debit",
+        "credit"
+      ],
+      "supportedNetworks": [
+        "amex",
+        "visa",
+        "discover",
+        "masterCard"
+      ],
+      "countryCode": "IN",
+      "currencyCode": "INR",
+      "requiredBillingContactFields": null,
+      "requiredShippingContactFields": null
+    }
+  }

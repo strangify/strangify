@@ -12,6 +12,7 @@ import 'package:strangify/providers/user_provider.dart';
 import 'package:strangify/screens/home_screen.dart';
 import '../constants.dart';
 import '../helpers/methods.dart';
+import '../providers/settings_provider.dart';
 import '../screens/listener_home.dart';
 
 class UserService {
@@ -40,7 +41,8 @@ class UserService {
       String otp,
       String verificationId,
       BuildContext context,
-      UserProvider provider) async {
+      UserProvider userProvider,
+      SettingsProvider settingsProvider) async {
     try {
       final AuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: otp);
@@ -48,10 +50,11 @@ class UserService {
       if (user != null) {
         DocumentSnapshot userSnap =
             await _db.collection('users').doc(user.uid).get();
+
         bool userExists = userSnap.exists;
         if (userExists) {
           //    suser.User.fromSnap(userSnap.data() as Map<String, dynamic>);
-          provider.refreshUser().then((value) => Navigator.of(context)
+          userProvider.refreshUser().then((value) => Navigator.of(context)
               .pushReplacementNamed(value?.role == 'speaker'
                   ? HomeScreen.routeName
                   : ListenerHomeScreen.routeName));
@@ -102,10 +105,16 @@ class UserService {
 
   Future<bool> convertToListener(
       {required String role,
+      required String accountNo,
+      required String bankName,
+      required String accountType,
+      required String ifscCode,
       required String name,
-      required String email,
+      required String phone,
       required String gender,
       required String age,
+      required String email,
+      required String accountName,
       required String description,
       required XFile image,
       required List selectedTags,
@@ -115,25 +124,39 @@ class UserService {
     try {
       String url = await uploadProfileImage(
           File(image.path), "$role/${_auth.currentUser!.uid}");
+      worksheet!.values.appendRow([
+        _auth.currentUser!.uid,
+        accountName,
+        phone,
+        bankName,
+        accountType,
+        accountNo,
+        ifscCode,
+        0
+      ]);
       _db.collection("users").doc(_auth.currentUser!.uid).update({
-        "role": "$role-pending",
-        "name": name,
-        "email": email,
+        "role": role,
         "isOnline": false,
-        "gender": gender,
-        "age": age,
-        "description": description,
         "imageUrl": url,
-        "reviews": [],
-        "tags": selectedTags,
-        "languages": languages,
-        "toNotifyTokens": [],
+        "name": name,
+        "age": age,
+        "email": email,
+        "gender": gender,
+        "accountName": accountName,
+        "bankName": bankName,
+        "accountNo": accountNo,
+        "ifscCode": ifscCode,
+        "accountType": accountType,
         "isChatEnabled": isChatEnabled,
         "isCallEnabled": isCallEnabled,
+        "tags": selectedTags,
+        "languages": languages,
+        "description": description,
+        "reviews": [],
+        "toNotifyTokens": [],
       });
       return true;
     } catch (e) {
-      print(e);
       return false;
     }
   }

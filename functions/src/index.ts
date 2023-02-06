@@ -1,18 +1,71 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import * as _ from "lodash";
+import Razorpay = require("razorpay");
 
+const cors = require('cors')({origin: true});
+var request = require("request");
 import nodeFetch from "node-fetch";
 import { uuidv4 } from "@firebase/util";
 var jwt = require("jsonwebtoken");
+admin.initializeApp();
 
 var app_access_key = "6363af674208780bf6677c35";
 var app_secret =
   "qZx_5DPbXpwaAKoX9kHnxjzRZt7mMaQsoqEyTw6JFXdPIp_NdQOYPOjZwwRaf7a1CQg7LA-VN0uTb-7L7Bu40cew4jYhc2vzkdMksIE5CX8xfuLYMSBdLQ5JfUi5E0G-kQJPYhNt_yeqOTUT39I7IGMXK8wqS7t10A2jn_RTiO4=";
 
-admin.initializeApp();
-const db = admin.firestore();
-const fcm = admin.messaging();
+  var key_id = "rzp_test_s5X5ImuVQBVKlA";
+  var key_secret = "bVCX8JwYqPKYuaOh5NU3whxx";
+  var instance = new Razorpay({
+  key_id: key_id,
+  key_secret: key_secret
+});
+  
+  const db = admin.firestore();
+  const fcm = admin.messaging();
+  
 
+
+  export const createOrder = functions.https.onCall(async (req, res) => {
+    try{
+        const order = await instance.orders.create({amount: `${req.amount}`, currency: 'INR', receipt: `${req.receipt}`, payment_capture: 1});
+        return order;
+    }catch(e){
+        console.log(e);
+        return {error: 'Something went wrong'};
+    }
+});
+
+  export const capturePayments = functions.https.onCall((req, res) => {
+    return cors(req, res, () => {
+      request(
+        {
+          method: "POST",
+          url: `https://${key_id}:${key_secret}@api.razorpay.com/v1/payments/${
+            req.body.payment_id
+          }/capture`,
+          form: {
+            amount: req.body.amount
+          }
+        },
+        (error: any, response: any, body: any) => {
+          // response
+          //   ? res.status(200).send({
+          //       res: response,
+          //       req: req.body,
+          //       body: body
+          //     })
+          //   : res.status(500).send(error);
+          return response? {
+                  res: response,
+                  req: req.body,
+                  body: body
+                }:error
+        }
+      );
+    });
+  });
+  
 export const notifyNewMessage = functions.firestore
   .document("session/{sessionId}")
   .onCreate(async (snapshot) => {
@@ -164,6 +217,7 @@ export const updateMessage = functions.firestore
     return false;
   });
 
+ 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //

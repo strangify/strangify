@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:strangify/constants.dart';
 import 'package:strangify/helpers/methods.dart';
 import 'package:strangify/models/user_model.dart';
@@ -12,6 +13,9 @@ import 'package:strangify/screens/call_screen.dart';
 import 'package:strangify/screens/chat_screen.dart';
 import 'package:strangify/widgets/connecting_sheet.dart';
 
+import '../helpers/triangle_clipper.dart';
+import '../providers/settings_provider.dart';
+import '../widgets/st_header.dart';
 import '../widgets/st_text.dart';
 
 class ListenerDetailScreen extends StatefulWidget {
@@ -76,14 +80,21 @@ class _ListenerDetailScreenState extends State<ListenerDetailScreen> {
               setState(() {
                 showSheet = true;
               });
-            } else if ((event.data() as Map)["status"] == "accepted") {
+            } else if ((event.data() as Map)["status"] == "active") {
               if ((event.data() as Map)["type"] == "call") {
                 chatStream!.cancel();
                 setState(() {
                   showSheet = false;
                 });
-                Navigator.of(context).pushNamed(CallScreen.routeName,
-                    arguments: {"name": widget.user.name, "chatRef": chatRef});
+                Navigator.of(context)
+                    .pushReplacementNamed(CallScreen.routeName, arguments: {
+                  "listenerName": widget.user.name,
+                  "speakerName": "Anonymous",
+                  "chatRef": chatRef,
+                  "speakerId": currentUser!.uid,
+                  "listenerId": widget.user.uid,
+                  "role": widget.user.role
+                });
               } else {
                 chatStream!.cancel();
                 setState(() {
@@ -91,11 +102,13 @@ class _ListenerDetailScreenState extends State<ListenerDetailScreen> {
                 });
 
                 Navigator.of(context)
-                    .pushNamed(ChatScreen.routeName, arguments: {
-                  "name": widget.user.name,
+                    .pushReplacementNamed(ChatScreen.routeName, arguments: {
+                  "listenerName": widget.user.name,
+                  "speakerName": "Anonymous",
                   "speakerId": currentUser!.uid,
                   "listenerId": widget.user.uid,
-                  "chatRef": chatRef
+                  "chatRef": chatRef,
+                  "role": widget.user.role
                 });
               }
             } else {
@@ -121,58 +134,45 @@ class _ListenerDetailScreenState extends State<ListenerDetailScreen> {
   auth.User? currentUser = auth.FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
+    SettingsProvider settingProvider = Provider.of<SettingsProvider>(context);
     final MediaQueryData mq = MediaQuery.of(context);
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size(double.infinity, 90),
+        child: StHeader(
+            child2: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  size: 22, color: Colors.white),
+            ),
+            child1: const Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 15),
+                child: StText("Details",
+                    size: 20, color: Colors.white, weight: FontWeight.w600),
+              ),
+            )),
+      ),
       backgroundColor: Colors.white,
       body: Stack(children: [
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 16, right: 16, top: 40, bottom: 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          size: 24,
-                          //color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const StText(
-                        "Details",
-                        height: 1,
-                        size: 18,
-                        //   weight: FontWeight.w500,
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
             SizedBox(
-              height: MediaQuery.of(context).size.height - 116,
+              height: MediaQuery.of(context).size.height - 180,
               child: ListView(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 18, horizontal: 4),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Card(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  children: [
+                    Center(
+                      child: Padding(
+                          padding: const EdgeInsets.only(top: 14, bottom: 8),
+                          child: Card(
                             margin: const EdgeInsets.symmetric(
                                 vertical: 4, horizontal: 4),
                             elevation: 1,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(50)),
                             child: Hero(
                               tag: "pfp",
                               child: Container(
@@ -184,183 +184,193 @@ class _ListenerDetailScreenState extends State<ListenerDetailScreen> {
                                         image: NetworkImage(
                                             widget.user.imageUrl!)),
                                     color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(10)),
+                                    borderRadius: BorderRadius.circular(50)),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: mq.size.width - 160,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        StText(
-                                          widget.user.name!.split(" ")[0],
-                                          size: 24,
-                                          weight: FontWeight.w400,
-                                        ),
-                                        StText(
-                                          widget.user.isOnline!
-                                              ? "ONLINE"
-                                              : "OFFLINE",
-                                          size: 12,
-                                          weight: FontWeight.w500,
-                                          color: widget.user.isOnline!
-                                              ? Colors.green
-                                              : Colors.red,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.star,
-                                        size: 18,
-                                        color: Colors.amber[600],
-                                      ),
-                                      const StText(
-                                        " -",
-                                        weight: FontWeight.w500,
-                                        size: 14,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    transform:
-                                        Matrix4.translationValues(0, 0, 0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: primaryColor),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 2, horizontal: 6),
-                                    child: StText(
-                                      "${widget.user.gender.toString()[0].toUpperCase()} - ${widget.user.age}Y",
-                                      weight: FontWeight.bold,
-                                      size: 13,
-                                      color: primaryColor,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                ]),
-                          ),
-                        ]),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const StText("My Story",
-                            size: 20,
-                            color: primaryColor,
-                            weight: FontWeight.w500),
-                        Padding(
-                            padding: const EdgeInsets.only(top: 8),
+                          )),
+                    ),
+
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          StText(widget.user.name!.split(" ")[0],
+                              size: 24,
+                              color: primaryColor,
+                              weight: FontWeight.w600),
+
+                          // const SizedBox(height: 3),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              //   border: Border.all(color: primaryColor),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 6),
                             child: StText(
-                              widget.user.description.toString(),
-                              size: 14,
-                            )),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 8),
-                          child: StText("Interests",
-                              size: 20,
-                              color: primaryColor,
-                              weight: FontWeight.w500),
+                                "${widget.user.gender.toString()[0].toUpperCase()} - ${widget.user.age}y",
+                                weight: FontWeight.bold,
+                                size: 12,
+                                color: Colors.grey),
+                          ),
+                          const SizedBox(height: 24),
+                        ]),
+                    Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(40),
+                              bottomRight: Radius.circular(40)),
+                          border: Border.all(color: primaryColor),
                         ),
-                        SizedBox(
-                            height: 125,
-                            child: ListView.builder(
-                              itemCount: widget.user.tags?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                return customContainer(
-                                    interestList[interestList.indexWhere(
-                                        (element) =>
-                                            element["name"].toLowerCase() ==
-                                            widget.user.tags![index])]["name"],
-                                    interestList[0]["desc"]);
-                              },
-                              padding: const EdgeInsets.only(
-                                  top: 10.0, left: 4, bottom: 15),
-                              scrollDirection: Axis.horizontal,
-                            )),
-                      ],
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 6),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: StText(
+                                    widget.user.role == "listener"
+                                        ? "My Story"
+                                        : "Bio",
+                                    size: 18,
+                                    color: primaryColor,
+                                    weight: FontWeight.w400),
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 16, left: 8, right: 8),
+                                  child: StText(
+                                      widget.user.description.toString(),
+                                      size: 13,
+                                      align: TextAlign.center)),
+                            ],
+                          ),
+                        )),
+                    // ClipPath(
+                    //   clipper: TriangleClipper(),
+                    //   child: Container(
+                    //     height: 60,
+                    //     color: primaryColor,
+                    //   ),
+                    // ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 20),
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(20)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(width: 60),
+                          StText(
+                            "${widget.user.role == "listener" ? settingProvider.getSettings!.listenerCharge : settingProvider.getSettings!.counsellorCharge}.00 Rs ",
+                            color: Colors.white,
+                            weight: FontWeight.w500,
+                          ),
+                          const StText(
+                            "per min",
+                            size: 14,
+                            color: Colors.white,
+                            weight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 2, bottom: 8),
-                          child: StText("Languages",
-                              size: 20,
-                              color: primaryColor,
-                              weight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                            height: 70,
-                            child: ListView.builder(
-                              itemCount: widget.user.languages?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                return customContainer(
-                                    widget.user.languages![index]);
-                              },
-                              padding: const EdgeInsets.only(
-                                  top: 10.0, left: 4, bottom: 15),
-                              scrollDirection: Axis.horizontal,
-                            )),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 0, bottom: 8),
+                            child: StText(
+                                widget.user.role == "listener"
+                                    ? "Interests"
+                                    : "Specialization",
+                                size: 20,
+                                color: primaryColor,
+                                weight: FontWeight.w500),
+                          ),
+                          SizedBox(
+                              height: 125,
+                              child: ListView.builder(
+                                itemCount: widget.user.tags?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  int i = interestList.indexWhere((element) =>
+                                      element["name"].toLowerCase() ==
+                                      widget.user.tags![index].toLowerCase());
+                                  return customContainer(
+                                      interestList[i]["name"],
+                                      interestList[i]["desc"]);
+                                },
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, left: 4, bottom: 15),
+                                scrollDirection: Axis.horizontal,
+                              )),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 2, bottom: 8),
-                          child: StText("Reviews",
-                              size: 20,
-                              color: primaryColor,
-                              weight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                            height: 70,
-                            child: ListView.builder(
-                              itemCount: widget.user.reviews?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                return customContainer(
-                                    widget.user.languages![index]);
-                              },
-                              padding: const EdgeInsets.only(
-                                  top: 10.0, left: 4, bottom: 15),
-                              scrollDirection: Axis.horizontal,
-                            )),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 2, bottom: 8),
+                            child: StText("Languages",
+                                size: 20,
+                                color: primaryColor,
+                                weight: FontWeight.w500),
+                          ),
+                          SizedBox(
+                              height: 70,
+                              child: ListView.builder(
+                                itemCount: widget.user.languages?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  return customContainer(
+                                      widget.user.languages![index]);
+                                },
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, left: 4, bottom: 15),
+                                scrollDirection: Axis.horizontal,
+                              )),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 2, bottom: 8),
+                            child: StText("Reviews",
+                                size: 20,
+                                color: primaryColor,
+                                weight: FontWeight.w500),
+                          ),
+                          SizedBox(
+                              height: 70,
+                              child: ListView.builder(
+                                itemCount: widget.user.reviews?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  return customContainer(
+                                      widget.user.languages![index]);
+                                },
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, left: 4, bottom: 15),
+                                scrollDirection: Axis.horizontal,
+                              )),
+                        ],
+                      ),
+                    ),
+                  ]),
             ),
             SizedBox(
               height: Platform.isIOS ? 60 : 50,
@@ -384,7 +394,9 @@ class _ListenerDetailScreenState extends State<ListenerDetailScreen> {
                             "time": DateTime.now(),
                             "messageList": [],
                             "status": "waiting",
-                            'type': 'chat'
+                            'type': 'chat',
+                            "listenerName": widget.user.name,
+                            "speakerName": "Anonymous",
                           });
                           // Navigator.of(context)
                           //     .pushNamed(ChatScreen.routeName, arguments: {
@@ -428,12 +440,16 @@ class _ListenerDetailScreenState extends State<ListenerDetailScreen> {
                     ),
                     child: TextButton(
                         onPressed: () async {
+                          //TODO as condition for <35
+
                           chatRef!.set({
                             "speakerId": currentUser!.uid,
                             "listenerId": widget.user.uid,
                             "time": DateTime.now(),
                             "status": "waiting",
-                            'type': 'call'
+                            'type': 'call',
+                            "listenerName": widget.user.name,
+                            "speakerName": "Anonymous",
                           });
 
                           // Navigator.of(context).pushNamed(CallScreen.routeName,

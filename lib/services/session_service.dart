@@ -7,10 +7,14 @@ class SessionService {
 
   Future<List> fetchSessions() async {
     List sessions = [];
-    QuerySnapshot docs = await _db.collection("sessions").get();
+    QuerySnapshot docs = await _db.collection("session").get();
     for (var element in docs.docs) {
       sessions.add(element.data());
     }
     return sessions;
+  }
+
+  Future updateSession(Map<String, dynamic> data) async {
+    _db.collection("session").doc(data["id"]).update(data);
   }
 }

@@ -29,7 +29,7 @@ class StText extends StatelessWidget {
       maxLines: maxLines,
       style: TextStyle(
           height: height,
-          letterSpacing: spacing ?? 1.3,
+          letterSpacing: spacing ?? .5,
           color: color ?? const Color(0xFF080808),
           fontWeight: weight,
           fontSize: size ?? 17),

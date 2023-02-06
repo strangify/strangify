@@ -5,10 +5,12 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:strangify/constants.dart';
 import 'package:strangify/helpers/methods.dart';
-import 'package:strangify/screens/wallet_screen.dart';
+import 'package:strangify/screens/call_screen.dart';
 import 'package:strangify/widgets/home_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import '../providers/settings_provider.dart';
 import '../providers/user_provider.dart';
+import '../widgets/st_header.dart';
 import '../widgets/st_text.dart';
 import 'chat_screen.dart';
 
@@ -28,68 +30,31 @@ class _ListenerHomeScreenState extends State<ListenerHomeScreen> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
+    SettingsProvider settingsProvider = Provider.of<SettingsProvider>(context);
     final MediaQueryData mq = MediaQuery.of(context);
     double appbarHeight = AppBar().preferredSize.height;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
             drawer: const HomeDrawer(),
-            appBar: AppBar(
-              actions: [
-                Container(
-                  // decoration: BoxDecoration(
-                  //   borderRadius: BorderRadius.circular(8),
-                  //   border: Border.all(color: Colors.white),
-                  // ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  margin: const EdgeInsets.only(top: 11, bottom: 11, right: 10),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.history, size: 20),
-                      SizedBox(width: 6),
-                      StText(
-                        "History",
-                        color: Colors.white,
-                        size: 15,
-                        weight: FontWeight.w500,
-                      )
-                    ],
-                  ),
+            appBar: PreferredSize(
+              preferredSize: Size(double.infinity, 90),
+              child: StHeader(
+                  child1: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: StText("Home",
+                      color: Colors.white, weight: FontWeight.w600),
                 ),
-                InkWell(
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(WalletScreen.routeName),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.white),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    margin:
-                        const EdgeInsets.only(top: 11, bottom: 11, right: 10),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.wallet, size: 20),
-                        SizedBox(width: 10),
-                        StText(
-                          "0.00",
-                          color: Colors.white,
-                          size: 15,
-                          weight: FontWeight.w500,
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-              backgroundColor: primaryColor,
+              )),
             ),
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(bottom: 30),
               child: SizedBox(
                 height: 52,
                 child: FloatingActionButton.extended(
-                  backgroundColor: primaryColor,
+                  backgroundColor: gradient1,
                   extendedPadding: const EdgeInsets.all(10),
                   onPressed: () {},
                   label: Row(
@@ -146,7 +111,8 @@ class _ListenerHomeScreenState extends State<ListenerHomeScreen> {
                     : ListView.builder(
                         itemCount: sessions.length,
                         itemBuilder: (context, i) {
-                          int secs = sessionExpiryDuration;
+                          int secs =
+                              settingsProvider.settings!.sessionExpiry.toInt();
 
                           Future.delayed(
                               const Duration(seconds: 1),
@@ -157,7 +123,8 @@ class _ListenerHomeScreenState extends State<ListenerHomeScreen> {
                                       .difference(
                                           (sessions[i]["time"].toDate()))
                                       .inSeconds >
-                                  sessionExpiryDuration
+                                  settingsProvider.settings!.sessionExpiry
+                                      .toInt()
                               ? const SizedBox()
                               : Container(
                                   padding: const EdgeInsets.only(
@@ -185,7 +152,7 @@ class _ListenerHomeScreenState extends State<ListenerHomeScreen> {
                                                   CrossAxisAlignment.start,
                                               children: const [
                                                 StText(
-                                                  "Anonymous User",
+                                                  "Anoymous",
                                                   size: 20,
                                                 ),
                                                 SizedBox(height: 6),
@@ -260,8 +227,12 @@ class _ListenerHomeScreenState extends State<ListenerHomeScreen> {
                                                                 ChatScreen
                                                                     .routeName,
                                                                 arguments: {
-                                                              "name":
-                                                                  "Annonymous User",
+                                                              "listenerName":
+                                                                  sessions[i][
+                                                                      "listenerName"],
+                                                              "speakerName":
+                                                                  sessions[i][
+                                                                      "speakerName"],
                                                               "speakerId":
                                                                   sessions[i][
                                                                       'speakerId'],
@@ -270,7 +241,27 @@ class _ListenerHomeScreenState extends State<ListenerHomeScreen> {
                                                                       'listenerId'],
                                                               "chatRef": chatRef
                                                             });
-                                                      } else {}
+                                                      } else {
+                                                        Navigator.of(context)
+                                                            .pushNamed(
+                                                                CallScreen
+                                                                    .routeName,
+                                                                arguments: {
+                                                              "listenerName":
+                                                                  sessions[i][
+                                                                      "listenerName"],
+                                                              "speakerName":
+                                                                  sessions[i][
+                                                                      "speakerName"],
+                                                              "speakerId":
+                                                                  sessions[i][
+                                                                      'speakerId'],
+                                                              "listenerId":
+                                                                  sessions[i][
+                                                                      'listenerId'],
+                                                              "chatRef": chatRef
+                                                            });
+                                                      }
                                                     },
                                                     style: ButtonStyle(
                                                         backgroundColor:

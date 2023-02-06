@@ -50,7 +50,7 @@ Future<String> uploadProfileImage(File file, String path) async {
 }
 
 String formatNumber(num value) {
-  var formatter = NumberFormat('#,##,000');
+  var formatter = NumberFormat('#,##,##0.00');
   return formatter.format(value);
 }
 
